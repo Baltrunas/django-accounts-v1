@@ -1,0 +1,81 @@
+{%extends 'base.html'%}
+{%block content%}
+<h1>Профиль "{{user.username}}"</h1>
+
+<h3>Товары и услуги:</h3>
+<table class='data'>
+	{% for item in order %}
+		<tr>
+			<form method='POST' action='/magazine/checkout/'> 
+			{% csrf_token %}
+				<td>#{{ item.id }}</td>
+				<td>{{ item.price.name }}</td>
+				<td>{{ item.get_status_display }}</td>
+				<td>{{ item.total_price }}</td>
+				<td>{{ item.added }}</td>
+				<td>{{ item.updated }}</td>
+				<td>{{ item.paid_for }}</td>
+				<td>{{ item.count }}</td>
+				<td>{{ item.last_price }}</td>
+				<!--td>{{ item.text }}</td-->
+				
+				<!--td style='width:100px'>{{ price.count }}</td-->
+				<td style='width:150px'>
+					<input type='hidden' value='{{ item.price.id }}' name='price'>
+					<input type='hidden' value='{{ item.id }}' name='order'>
+					<input name='save' type="submit" value="Продлить" style='margin: 0px;'>				
+				</td>
+				<!--td style='width:150px'><input name='delet' type="submit" value="Удалить" style='margin: 0px;'></td-->
+			</form>
+		</tr>
+	{% endfor %}
+</table>
+<p>Итого: <b>{{basket_summ}}</b></p>
+
+
+
+<h3>Платежи:</h3>
+<table class='data'>
+	{% for item in payments %}
+	<tr>
+		<td>#{{ item.id }}</td>
+		<td>{{ item.get_status_display }}</td>
+		<td>{{ item.total_price }}</td>
+		<td>{{ item.text }}</td>
+		<td>{{ item.created }}</td>
+		<td>{{ item.updated }}</td>
+		<td>{{ item.paid }}</td>
+		<!--td style='width:100px'>{{ price.count }}</td-->
+		<!--td style='width:150px'><input name='save' type="submit" value="Сохранить" style='margin: 0px;'></td-->
+		<!--td style='width:150px'><input name='delet' type="submit" value="Удалить" style='margin: 0px;'></td-->
+	</tr>
+	{% endfor %}
+</table>
+<p>Итого: <b>{{basket_summ}}</b></p>
+
+
+<h3>Заказы:</h3>
+<table class='data'>
+	{% for item in basket %}
+		<tr>
+			<form method='POST' action='/magazine/checkout/'> 
+			{% csrf_token %}
+				<td>{{ item.id }}</td>
+				<td>{{ item.price.name }}</td>
+				<td>{{ item.get_status_display }}</td>
+				<td>{{ item.total_price }}</td>
+				<td>{{ item.added }}</td>
+				<td>{{ item.updated }}</td>
+				<td>{{ item.paid }}</td>
+				<td>{{ item.order.id }}</td>
+				<td>{{ item.count }}</td>
+				<td>{{ item.pay.id }}</td>
+				<!--td style='width:100px'>{{ price.count }}</td-->
+				<!--td style='width:150px'><input name='save' type="submit" value="Сохранить" style='margin: 0px;'></td-->
+				<!--td style='width:150px'><input name='delet' type="submit" value="Удалить" style='margin: 0px;'></td-->
+			</form>
+		</tr>
+	{% endfor %}
+</table>
+<p>Итого: <b>{{basket_summ}}</b></p>
+{%endblock%}

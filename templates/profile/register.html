@@ -1,0 +1,45 @@
+{%extends 'base.html'%}
+{%block content%}
+<h1>Регистрация</h1>
+<center>
+	<form method='POST' action=''>
+		{% csrf_token %}
+		<label for='username'>{{userForm.username.label}}:  <strong>*</strong></label>
+		{%for error in userForm.username.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userForm.username}}<br>
+		
+		<label for='firstname'>Имя:  <strong>*</strong></label>
+		{%for error in userForm.firstname.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userForm.firstname}}<br>
+		
+		<label for='lastname'>Фамилия:  <strong>*</strong></label>
+		{%for error in userForm.lastname.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userForm.lastname}}<br>
+		
+		<label for='email'>E-Mail:  <strong>*</strong></label>
+		{%for error in userForm.email.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userForm.email}}<br>		
+		
+		<label for='pass1'>Пароль:  <strong>*</strong></label>
+		{%for error in userForm.pass1.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userForm.pass1}}<br>
+
+		<label for='pass2'>Повтор пароля:  <strong>*</strong></label>
+		{%for error in userForm.pass2.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userForm.pass2}}<br>
+		
+		<label for='birthday'>Дата рождения  <strong>*</strong></label>
+		{%for error in userForm.birthday.errors%}<strong>{{error}}</strong><br>{%endfor%}
+		{{userProfileForm.birthday}}<br>
+		
+<!--
+		{{userForm}}
+		{{userProfileForm}}
+-->
+
+		
+		<small><strong>*</strong> — поля обязательные для заполнения</small>
+		<input type='submit' name='submit' value='Зарегистрироваться'><br>
+	</form>
+</center>
+{%endblock%}

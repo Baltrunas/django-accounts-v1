@@ -1,0 +1,16 @@
+{%extends 'base.html'%}
+{%block content%}
+<h1>Вход</h1>
+	<center>
+	
+<form method="post" action="">
+    {% csrf_token %}
+    <p><label for="id_username">Логин:</label> <input id="id_username" type="text" name="username" maxlength="30" /></p>
+    <p><label for="id_password">Пароль:</label> <input type="password" name="password" id="id_password" /></p>
+
+    <input type="submit" value="Войти" />
+    <input type="hidden" name="next" value="{%url profile%}" />
+</form>
+
+	</center>
+{%endblock%}
