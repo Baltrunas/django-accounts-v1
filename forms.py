@@ -34,6 +34,7 @@ class UserForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
 	birthday = forms.DateField(required=False, widget=DataInput(), label='Дата рождения')
 
+
 # class ContactForm(forms.Form):
 	# name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'required':'required', 'placeholder' : 'Ваше Имя'}))
 	# tel = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': '+996 (555) 33-88-74'}))
