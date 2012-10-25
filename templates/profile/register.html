@@ -31,13 +31,10 @@
 		<label for='birthday'>Дата рождения  <strong>*</strong></label>
 		{%for error in userForm.birthday.errors%}<strong>{{error}}</strong><br>{%endfor%}
 		{{userProfileForm.birthday}}<br>
-		
 <!--
 		{{userForm}}
 		{{userProfileForm}}
 -->
-
-		
 		<small><strong>*</strong> — поля обязательные для заполнения</small>
 		<input type='submit' name='submit' value='Зарегистрироваться'><br>
 	</form>
