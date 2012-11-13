@@ -52,7 +52,7 @@ def signup(request):
 	context['userProfile'] = userProfile
 	context['userForm'] = userForm
 	context['userProfileForm'] = userProfileForm
-	return render_to_response('accounts_register.html', context, context_instance=RequestContext(request))
+	return render_to_response('profile/register.html', context, context_instance=RequestContext(request))
 
 
 # Профиль текущего пользователя

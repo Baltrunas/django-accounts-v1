@@ -33,11 +33,6 @@ class UserForm(forms.ModelForm):
 
 class UserProfileForm(forms.ModelForm):
 	birthday = forms.DateField(required=False, widget=DataInput(), label='Дата рождения')
-
-
-# class ContactForm(forms.Form):
-	# name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'required':'required', 'placeholder' : 'Ваше Имя'}))
 	# tel = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': '+996 (555) 33-88-74'}))
-	# email = forms.EmailField(max_length=200, widget=Html5EmailInput(attrs={'placeholder' : 'manager@glavit.com', 'required': 'required'}))
 	# url = forms.CharField(required=False, max_length=200, widget=Html5URLInput(attrs={'placeholder' : 'http://www.glavit.com/'}))
 	# msg = forms.CharField(widget=forms.Textarea(attrs={'required':'required'}))
