@@ -4,7 +4,7 @@ from profile.models import UserProfile
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-	list_display = ('user', 'birthday')
-	search_fields = ('user', 'birthday')
+	list_display = ('user', 'gender', 'birthday')
+	search_fields = ('user', 'gender', 'birthday')
 
 admin.site.register(UserProfile, UserProfileAdmin)

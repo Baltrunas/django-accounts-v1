@@ -6,6 +6,11 @@ from django.utils.translation import ugettext_lazy as _
 
 class UserProfile(models.Model):
 	user = models.ForeignKey(User, null=True)
+	GENDER_CHOICES = (
+		(True, _('Man')),
+		(False, _('Women')),
+	)
+	gender = models.BooleanField(_('Gender'), default=False, choices=GENDER_CHOICES)
 	birthday = models.DateField(blank=True, null=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
