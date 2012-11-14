@@ -3,8 +3,8 @@ from django.conf.urls import url
 
 
 urlpatterns = patterns('',
-	url(r'^signup/$', 'profile.views.signup', name='signup'),
-	url(r'^profile/$', 'profile.views.my_profile', name='profile'),
-	url(r'^login/$', 'django.contrib.auth.views.login', {"template_name": "profile/login.html"}, name='login'),
-	url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),
+	url(r'^signup/$', 'accounts.views.signup', name='accounts_signup'),
+	url(r'^accounts/$', 'accounts.views.my_profile', name='accounts_accounts'),
+	url(r'^login/$', 'django.contrib.auth.views.login', {"template_name": "accounts/login.html"}, name='accounts_login'),
+	url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='accounts_logout'),
 )

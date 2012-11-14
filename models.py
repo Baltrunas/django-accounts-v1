@@ -23,7 +23,7 @@ class UserProfile(models.Model):
 def user_post_save(sender, instance, **kwargs):
 	(profile, new) = UserProfile.objects.get_or_create(user=instance)
 
-# коректное сохранение
+# Save profile when User save!
 models.signals.post_save.connect(user_post_save, sender=User)
 
 # class Transactions( models.Model ):

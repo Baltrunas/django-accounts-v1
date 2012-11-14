@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
-#, logout
+from django.contrib.auth import login
+from django.contrib.auth import authenticate
 
-from profile.models import UserProfile
-from profile.forms import UserForm, UserProfileForm
-# from magazine.models import Basket, Order, Pay
+from accounts.models import UserProfile
+
+from accounts.forms import UserForm
+from accounts.forms import UserProfileForm
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -14,16 +15,13 @@ from django.template import RequestContext
 
 from django.shortcuts import redirect
 
-# from context import context
-context = {}
 
-
-# регистрация
+# Sign Up
 def signup(request):
 	context = {}
 	user = User()
 	if request.user.is_authenticated():
-		return redirect('profile')
+		return redirect('accounts_accounts')
 	userProfile = UserProfile()
 	if request.method == 'POST':
 		userForm = UserForm(request.POST, instance=user)
@@ -31,31 +29,30 @@ def signup(request):
 		if userForm.is_valid() and userProfileForm.is_valid():
 			userData = userForm.cleaned_data
 			user.username = userData['username']
-			user.first_name = userData['firstname']
-			user.last_name = userData['lastname']
+			user.first_name = userData['first_name']
+			user.last_name = userData['last_name']
 			user.email = userData['email']
-			user.set_password(userData['pass1'])
+			user.set_password(userData['password'])
 			user.save()
 
 			userProfile = user.get_profile()
 			userProfileData = userProfileForm.cleaned_data
+			userProfile.gender = userProfileData['gender']
 			userProfile.birthday = userProfileData['birthday']
 			userProfile.save()
 
-			user = authenticate(username=userData['username'], password=userData['pass1'])
+			user = authenticate(username=userData['username'], password=userData['password'])
 			login(request, user)
-			return redirect('profile')
+			return redirect('accounts_accounts')
 	else:
 		userForm = UserForm(instance=user)
 		userProfileForm = UserProfileForm(instance=userProfile)
-	context['user_'] = user
-	context['userProfile'] = userProfile
 	context['userForm'] = userForm
 	context['userProfileForm'] = userProfileForm
-	return render_to_response('profile/register.html', context, context_instance=RequestContext(request))
+	return render_to_response('accounts/register.html', context, context_instance=RequestContext(request))
 
 
-# Профиль текущего пользователя
+# Profile
 @login_required
 def my_profile(request):
 	context = {}
@@ -69,4 +66,4 @@ def my_profile(request):
 		# summ += i.total_price
 	context['basket_summ'] = summ
 	context['user'] = user
-	return render_to_response('profile/profile.html', context, context_instance=RequestContext(request))
+	return render_to_response('accounts/accounts.html', context, context_instance=RequestContext(request))

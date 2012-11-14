@@ -5,9 +5,9 @@ A simple catalog.
 A simple catalog.
 
 # Install
-* add to urls.py url(r'^profile/', include('profile.urls')),
-* add to INSTALLED_APPS in settinhs.py 'profile',
-* add to settings.py AUTH_PROFILE_MODULE = 'profile.UserProfile'
+* add to urls.py url(r'^accounts/', include('accounts.urls')),
+* add to INSTALLED_APPS in settinhs.py 'accounts',
+* add to settings.py AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 # Fow to use
 Just use...
