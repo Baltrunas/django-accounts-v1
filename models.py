@@ -3,9 +3,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+# import code for encoding urls and generating md5 hashes
+import urllib
+import hashlib
+
 
 class UserProfile(models.Model):
-	user = models.ForeignKey(User, null=True)
+	user = models.ForeignKey(User, null=True, related_name='profile')
 	GENDER_CHOICES = (
 		(True, _('Man')),
 		(False, _('Women')),
@@ -14,6 +18,12 @@ class UserProfile(models.Model):
 	birthday = models.DateField(blank=True, null=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+	def gravatar(self):
+		size = 70
+		url = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.user.email.lower()).hexdigest() + '?'
+		url += urllib.urlencode({'s': str(size)})
+		return url
 
 	class Meta:
 		ordering = ['-updated_at']
