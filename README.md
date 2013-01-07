@@ -13,8 +13,14 @@ A simple catalog.
 Just use...
 
 # Futures
+* Check old pass when pass changing
+* Check user name when user name changing
 
 # ChangeLog
+## 2013.01.07
+### Add
+* Edit account
+
 ## 2012.10.25
 ### Fix
 * README.md

@@ -8,6 +8,7 @@ from accounts.models import UserProfile
 
 from accounts.forms import UserForm
 from accounts.forms import UserProfileForm
+from accounts.forms import UserEditForm
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -67,3 +68,42 @@ def my_profile(request):
 	context['basket_summ'] = summ
 	context['user'] = user
 	return render_to_response('accounts/accounts.html', context, context_instance=RequestContext(request))
+
+
+@login_required
+def edit(request):
+	context = {}
+	user = request.user
+	if request.method == 'POST':
+		AccountsUserEditForm = UserEditForm(request.POST)
+		if AccountsUserEditForm.is_valid():
+			form_data = AccountsUserEditForm.cleaned_data
+			user.username = form_data['username']
+			user.first_name = form_data['first_name']
+			user.last_name = form_data['last_name']
+			user.email = form_data['email']
+			if form_data['password']:
+				user.set_password(form_data['password'])
+			user.save()
+
+			userProfile = user.get_profile()
+			userProfile.gender = form_data['gender']
+			userProfile.birthday = form_data['birthday']
+			userProfile.save()
+
+			if form_data['password']:
+				user = authenticate(username=form_data['username'], password=form_data['password'])
+				login(request, user)
+			return redirect('accounts_accounts')
+	else:
+		AccountsUserEditForm = UserEditForm({
+				'username': user.username,
+				'first_name': user.first_name,
+				'last_name': user.last_name,
+				'email': user.email,
+				'gender': user.profile.get().gender,
+				'birthday': user.profile.get().birthday
+			})
+	context['AccountsUserEditForm'] = AccountsUserEditForm
+	context['user'] = user
+	return render_to_response('accounts/edit.html', context, context_instance=RequestContext(request))

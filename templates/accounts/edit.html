@@ -1,0 +1,27 @@
+{%extends 'base.html'%}
+{% load i18n %}
+
+{%block content%}
+<h1>{% trans "Edit" %}</h1>
+	<form method="post" action="" id='edit_form'>
+		{% csrf_token %}
+		{%if AccountsUserEditForm.errors %}<h3><strong>{% trans "Error!" %}</strong></h3>{% endif %}
+		{{ AccountsUserEditForm.management_form }}
+		{% for field in AccountsUserEditForm %}
+			<ul class='{% if field.field.required %}required{% else %}not_required{% endif %}'>
+				<li>{{ field.label_tag }}</li>
+				{% if field.errors %}
+					<li>
+						<ul>
+							{% for error in field.errors %}
+								<li>{{ error }}</li>
+							{% endfor %}
+						</ul>
+					</li>
+				{% endif %}
+				<li>{{ field }}</li>
+			</ul>
+		{% endfor %}
+		<input type="submit" value='{% trans "Edit" %}'>
+	</form>
+{%endblock%}
