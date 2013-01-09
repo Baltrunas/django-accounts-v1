@@ -36,19 +36,34 @@ def user_post_save(sender, instance, **kwargs):
 # Save profile when User save!
 models.signals.post_save.connect(user_post_save, sender=User)
 
-# class Transactions( models.Model ):
-	# user = models.ForeignKey(User, null = True)
-	# PRICE_CHOICES = (
-		# ('servece', 'servece'),
-		# ('product', 'product'),
-		# ('balance', 'balance'),
-	# )
-	# price = models.CharField(max_length=30, choices=PRICE_CHOICES)
-	# id = models.IntegerField(blank = True, null = True)
-	# TYPE_CHOICES = (
-		# ('new', 'new'),
-		# ('old', 'old'),
-	# )
-	# type = models.CharField(max_length=30, choices=TYPE_CHOICES)
-	# sum = models.DecimalField(max_digits=7, decimal_places=2)
-	# datetime = models.DateTimeField(auto_now_add = True)
+
+class Transaction(models.Model):
+	user = models.ForeignKey(User, related_name='transactions', verbose_name=_('User'))
+	TRANSACTION_PRICE_CHOICES = (
+		('servece', 'servece'),
+		('product', 'product'),
+		('balance', 'balance'),
+	)
+	transection_type = models.CharField(verbose_name=_('Transaction Type'), max_length=50, choices=TRANSACTION_PRICE_CHOICES)
+	# зделать тип транзакции foreginkey
+
+	comment = models.TextField(verbose_name=_('Comment'), blank=True)
+	description = models.TextField(verbose_name=_('Description'), blank=True)
+
+	# добавить отправителя платежа или получателя
+	total = models.DecimalField(verbose_name=_('Total'), max_digits=10, decimal_places=4)
+	public = models.BooleanField(verbose_name=_('Public'), default=True)
+	created_at = models.DateTimeField(verbose_name=_('Created At'), auto_now_add=True)
+	updated_at = models.DateTimeField(verbose_name=_('Updated At'), auto_now=True)
+
+	def balabce(self):
+		pass
+
+	def __unicode__(self):
+		display = '#%s' % self.id
+		return display
+
+	class Meta:
+		ordering = ['-updated_at']
+		verbose_name = _('Transaction')
+		verbose_name_plural = _('Transactions')

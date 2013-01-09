@@ -5,6 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth import authenticate
 
 from accounts.models import UserProfile
+from accounts.models import Transaction
 
 from accounts.forms import UserForm
 from accounts.forms import UserProfileForm
@@ -13,6 +14,8 @@ from accounts.forms import UserEditForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 # from django.http import HttpResponseRedirect
+
+from django.db.models import Sum
 
 from django.shortcuts import redirect
 
@@ -58,7 +61,7 @@ def signup(request):
 def my_profile(request):
 	context = {}
 	user = request.user
-	# context['order'] = Order.objects.filter(user=user)
+	context['balance'] = Transaction.objects.filter(user=user, public=True).aggregate(Sum('total'))
 	# context['basket'] = Basket.objects.filter(user=user)
 	# context['payments'] = Pay.objects.filter(user=user)
 
