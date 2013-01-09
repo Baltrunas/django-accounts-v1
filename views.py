@@ -19,6 +19,8 @@ from django.db.models import Sum
 
 from django.shortcuts import redirect
 
+import datetime
+
 
 # Sign Up
 def signup(request):
@@ -61,14 +63,32 @@ def signup(request):
 def my_profile(request):
 	context = {}
 	user = request.user
-	context['balance'] = Transaction.objects.filter(user=user, public=True).aggregate(Sum('total'))
+	context['title'] = user.username
 	# context['basket'] = Basket.objects.filter(user=user)
 	# context['payments'] = Pay.objects.filter(user=user)
 
-	summ = 0
-	# for i in context['basket']:
-		# summ += i.total_price
-	context['basket_summ'] = summ
+	base = datetime.datetime.today()
+	dateList = [base + datetime.timedelta(days=x) for x in range(-7, 1)]
+
+	days = []
+
+	for for_date in dateList:
+		total = Transaction.objects.filter(
+				user=user,
+				public=True,
+				total__lte=0,
+				created_at__year=for_date.year,
+				created_at__month=for_date.month,
+				created_at__day=for_date.day
+		).aggregate(Sum('total'))
+		if total['total__sum']:
+			total = total['total__sum'] * -1
+		else:
+			total = 0
+		days.append({'date': for_date, 'total': total})
+
+	context['days'] = days
+	context['balance'] = Transaction.objects.filter(user=user, public=True).aggregate(Sum('total'))
 	context['user'] = user
 	return render_to_response('accounts/accounts.html', context, context_instance=RequestContext(request))
 

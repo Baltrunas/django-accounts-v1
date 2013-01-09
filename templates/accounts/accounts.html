@@ -1,8 +1,63 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load currency %}
 {% block content %}
-<h1>Профиль "{{user.username}}"</h1>
-<p>Balance: {{ balance.total__sum|currency:2 }} <i>Р.</i></p>
+
+<h1>{{ user.username }}</h1>
+	<img src="{{ user.get_profile.gravatar }}&s=500" alt="{{ user.username }}" width="250" align='right'>
+	<b>{{ user.first_name }} {{ user.last_name }}</b>
+
+	<p><b>{% trans "Balance" %}</b>: {{ balance.total__sum|currency:2 }} <i>Р.</i></p>
+
+	<p><b>{% trans "E-Mail" %}:</b> {{ user.email }}</p>
+	<p><b>{% trans "Gender" %}:</b> {{ user.get_profile.gender }}</p>
+	<p><b>{% trans "Birthday" %}:</b> {{ user.get_profile.birthday }}</p>
+	<p><b>{% trans "Created At" %}:</b> {{ user.get_profile.created_at }}</p>
+	<p><b>{% trans "Updated At" %}:</b> {{ user.get_profile.updated_at }}</p>
+
+	<p><b><a href="/accounts/edit/">{% trans "Edit Profile" %}</a></b></p>
+
+	<table class='data'>
+		<tr class='one'>
+			<td>{% trans "Date" %}</td>
+			<td>{% trans "Total" %}</td>
+		</tr>
+		{% for day in days %}
+			<tr>
+				<td>{{ day.date|date }}</td>
+				<td>{{ day.total|currency:2 }} р.</td>
+			</tr>
+		{% endfor %}
+	</table>
+
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				['Date', 'Total'],
+
+{% for day in days %}
+	['{{ day.date|date }}', {{ day.total|stringformat:"f" }}],
+{% endfor %}
+
+			]);
+
+			var options = {
+				title: 'Финансовая статистика'
+			};
+
+			var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+			chart.draw(data, options);
+		}
+	</script>
+	<div id="chart_div" style="width: 1200px; height: 500px;"></div>
+
+
+
+
+{% comment %}
 <h3>Товары и услуги:</h3>
 <table class='data'>
 	{% for item in order %}
@@ -32,8 +87,6 @@
 	{% endfor %}
 </table>
 <p>Итого: <b>{{basket_summ}}</b></p>
-
-
 
 <h3>Платежи:</h3>
 <table class='data'>
@@ -79,4 +132,6 @@
 	{% endfor %}
 </table>
 <p>Итого: <b>{{basket_summ}}</b></p>
+{% endcomment %}
+
 {%endblock%}

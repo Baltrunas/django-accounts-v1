@@ -15,6 +15,6 @@ class TransactionAdmin(admin.ModelAdmin):
 	list_display = ['user', 'transection_type', 'comment', 'total', 'public', 'created_at', 'updated_at']
 	search_fields = ['user', 'transection_type', 'comment', 'total', 'public', 'created_at', 'updated_at']
 	list_editable = ['public']
-	list_filter = ['public']
+	list_filter = ['total', 'public']
 
 admin.site.register(Transaction, TransactionAdmin)
