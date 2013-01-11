@@ -43,6 +43,7 @@ class Transaction(models.Model):
 		('servece', 'servece'),
 		('product', 'product'),
 		('balance', 'balance'),
+		('bonus', 'bonus'),
 	)
 	transection_type = models.CharField(verbose_name=_('Transaction Type'), max_length=50, choices=TRANSACTION_PRICE_CHOICES)
 	# зделать тип транзакции foreginkey
