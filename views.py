@@ -68,7 +68,7 @@ def my_profile(request):
 	# context['payments'] = Pay.objects.filter(user=user)
 
 	base = datetime.datetime.today()
-	dateList = [base + datetime.timedelta(days=x) for x in range(-7, 1)]
+	dateList = [base + datetime.timedelta(days=x) for x in range(-14, 1)]
 
 	days = []
 
