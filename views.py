@@ -14,6 +14,8 @@ from accounts.forms import UserEditForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 # from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
+
 
 from django.db.models import Sum
 
@@ -25,6 +27,7 @@ import datetime
 # Sign Up
 def signup(request):
 	context = {}
+	context['title'] = _('Register')
 	user = User()
 	if request.user.is_authenticated():
 		return redirect('accounts_accounts')
