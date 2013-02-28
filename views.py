@@ -126,7 +126,7 @@ def loginza(request):
 			context['error'] = 'No token!'
 			return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
 	else:
-		return redirect('accounts_login')
+		return redirect('accounts_login', error=_('No POST date!'))
 
 
 # Sign Up

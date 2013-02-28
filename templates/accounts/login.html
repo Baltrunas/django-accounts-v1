@@ -1,22 +1,33 @@
 {%extends 'base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+
 {%block content%}
-<h1>Вход</h1>
-<p>
-	Вы можете войти используя свой логин или пароль либо используя один из своих социальных профилей. Ну а если <s>ты лох и у тебя нет друзей</s> у вас нету ни логина ни профиля в социальных сетях вы можете <a href='/accounts/signup/'>зарегестрироваться</a>.
-</p>
+	<h1>{% trans "Login" %}</h1>
+	<p>
+		Вы можете войти используя свой логин или пароль либо используя один из своих социальных профилей. Ну а если <s>ты лох и у тебя нет друзей</s> у вас нету ни логина ни профиля в социальных сетях вы можете <a href='/accounts/signup/'>зарегестрироваться</a>.
+	</p>
+	<div class="b-login__login-local">
+		<form method="post" action="{% url 'accounts_login' %}">
+			{% csrf_token %}
+			<p><label for="id_username">{% trans "Username" %}:</label> <input id="id_username" type="text" name="username" maxlength="30"></p>
+			<p><label for="id_password">{% trans "Password" %}:</label> <input type="password" name="password" id="id_password"></p>
+			<input type="submit" value="Log In">
+			<input type="hidden" name="next" value="{% url 'home' %}">
+		</form>
+	</div>
 
-<div class="b-login__login-local">
-	<form method="post" action="">
-		{% csrf_token %}
-		<p><label for="id_username">Логин:</label> <input id="id_username" type="text" name="username" maxlength="30"></p>
-		<p><label for="id_password">Пароль:</label> <input type="password" name="password" id="id_password"></p>
-		<input type="submit" value="Войти">
-		<input type="hidden" name="next" value="{% url home %}">
-	</form>
-</div>
+	<div class="b-login__or">{% trans "or" %}</div>
 
-<div class="b-login__login_loginza">
-	<script src="http://loginza.ru/js/widget.js" type="text/javascript"></script>
-	<iframe src="http://loginza.ru/api/widget?overlay=loginza&token_url=http://[RETURN_URL]" style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
-</div>
+	<div class="b-login__login_loginza">
+		<script src="http://loginza.ru/js/widget.js" type="text/javascript"></script>
+		<iframe src="http://loginza.ru/api/widget?overlay=loginza&token_url=http://{{ site.domain }}{% url 'accounts_loginza' %}" style="width:420px;height:200px;" scrolling="no" frameborder="no"></iframe>
+	</div>
 {%endblock%}
+
+{% block aside %}
+	<style>
+		section, article {width: 980px;}
+	</style>
+{% endblock aside %}
