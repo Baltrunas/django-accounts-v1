@@ -28,6 +28,7 @@ from django.shortcuts import redirect
 import datetime
 from hashlib import md5
 from django.utils import simplejson
+from django.conf import settings
 
 
 def body(url):
@@ -49,11 +50,15 @@ def loginza(request):
 
 	if (request.POST):
 		if 'token' in request.POST:
-			id = 123
-			key = '123'
+			token = request.POST['token']
+			if hasattr(settings, 'ACCOUNTS_LOGINZA_WIDGET') and hasattr(settings, 'ACCOUNTS_LOGINZA_KEY'):
+				id = settings.ACCOUNTS_LOGINZA_WIDGET = 46456
+				key = settings.ACCOUNTS_LOGINZA_KEY = 'd7ce6be4148147e43d10fd5ca708e4d9'
+				sig = md5(token + key).hexdigest()
+				loginza_url = 'http://loginza.ru/api/authinfo?token=%s&id=%s&sig=%s' % (token, id, sig)
+			else:
+				loginza_url = 'http://loginza.ru/api/authinfo?token=%s' % token
 
-			sig = md5(request.POST['token'] + key).hexdigest()
-			loginza_url = 'http://loginza.ru/api/authinfo?token=%s&id=%s&sig=%s' % (request.POST['token'], id, sig)
 			context['loginza_json'] = body(loginza_url)
 			context['loginza_data'] = simplejson.loads(context['loginza_json'])
 
@@ -121,10 +126,7 @@ def loginza(request):
 			context['error'] = 'No token!'
 			return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
 	else:
-		context['error'] = 'No POST data!'
-		return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
-
-	# return render_to_response('main.html', context, context_instance=RequestContext(request))
+		return redirect('accounts_login')
 
 
 # Sign Up
