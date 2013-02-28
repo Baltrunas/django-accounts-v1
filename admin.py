@@ -2,6 +2,7 @@
 from django.contrib import admin
 from accounts.models import UserProfile
 from accounts.models import Transaction
+from accounts.models import Identity
 
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -9,6 +10,13 @@ class UserProfileAdmin(admin.ModelAdmin):
 	search_fields = ('user', 'gender', 'birthday')
 
 admin.site.register(UserProfile, UserProfileAdmin)
+
+
+class IdentityAdmin(admin.ModelAdmin):
+	list_display = ['id', 'provider', 'identity']
+	list_filter = ['provider']
+
+admin.site.register(Identity, IdentityAdmin)
 
 
 class TransactionAdmin(admin.ModelAdmin):

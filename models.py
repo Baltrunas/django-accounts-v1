@@ -8,6 +8,22 @@ import urllib
 import hashlib
 
 
+class Identity(models.Model):
+	identity = models.CharField(_('identity'), max_length=255, unique=True)
+	provider = models.CharField(_('provider'), max_length=255)
+	data = models.TextField(_('data'))
+
+	# objects = IdentityManager()
+
+	def __unicode__(self):
+		return self.identity
+
+	class Meta:
+		ordering = ['id']
+		verbose_name = _('Identity')
+		verbose_name_plural = _('Identities')
+
+
 class UserProfile(models.Model):
 	user = models.ForeignKey(User, null=True, related_name='profile')
 	GENDER_CHOICES = (
@@ -16,8 +32,14 @@ class UserProfile(models.Model):
 	)
 	gender = models.BooleanField(_('Gender'), default=False, choices=GENDER_CHOICES)
 	birthday = models.DateField(blank=True, null=True)
+
+	identity = models.ManyToManyField(Identity, related_name='local_profile', verbose_name=_('Identity'), null=True, blank=True)
+	verified = models.BooleanField(_('active'), default=False, db_index=True)
+
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+	# objects = UserMapManager()
 
 	def gravatar(self):
 		size = 70
@@ -25,9 +47,13 @@ class UserProfile(models.Model):
 		url += urllib.urlencode({'s': str(size)})
 		return url
 
+	def __unicode__(self):
+		return str(self.user)
+
 	class Meta:
-		ordering = ['-updated_at']
-		verbose_name_plural = _('UserProfile')
+		ordering = ['user']
+		verbose_name = _('User Profile')
+		verbose_name_plural = _('User Profiles')
 
 
 def user_post_save(sender, instance, **kwargs):

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 
+from accounts.models import Identity
 from accounts.models import UserProfile
 from accounts.models import Transaction
 
@@ -16,12 +17,114 @@ from django.template import RequestContext
 # from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 
+from django.views.decorators.csrf import csrf_exempt
+
+import urllib2
 
 from django.db.models import Sum
 
 from django.shortcuts import redirect
 
 import datetime
+from hashlib import md5
+from django.utils import simplejson
+
+
+def body(url):
+	opener = urllib2.build_opener()
+	opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+	try:
+		response = opener.open(url)
+		html = response.read()
+		return html
+	except:
+		return False
+
+
+# Loginza
+@csrf_exempt
+def loginza(request):
+	context = {}
+	context['request'] = request
+
+	if (request.POST):
+		if 'token' in request.POST:
+			id = 123
+			key = '123'
+
+			sig = md5(request.POST['token'] + key).hexdigest()
+			loginza_url = 'http://loginza.ru/api/authinfo?token=%s&id=%s&sig=%s' % (request.POST['token'], id, sig)
+			context['loginza_json'] = body(loginza_url)
+			context['loginza_data'] = simplejson.loads(context['loginza_json'])
+
+			if 'error_type' not in context['loginza_json']:
+				tmp_identity = Identity.objects.filter(identity=context['loginza_data']['identity'])
+				if tmp_identity:
+					tmp_user = User.objects.filter(profile__identity=tmp_identity[0])
+				if tmp_identity and tmp_user:
+					# identity = Identity.objects.get(identity=context['loginza_data']['identity'])
+					user = User.objects.get(profile__identity=tmp_identity[0])
+
+					user.backend = 'django.contrib.auth.backends.ModelBackend'
+
+					login(request, user)
+					return redirect('accounts_accounts')
+
+					# context['error'] = 'Log ok'
+					# return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+				else:
+					if not tmp_identity:
+						# Создаём loginza данные
+						new_identity = Identity()
+						new_identity.provider = context['loginza_data']['provider']
+						new_identity.identity = context['loginza_data']['identity']
+						new_identity.data = context['loginza_json']
+						new_identity.save()
+					else:
+						new_identity = tmp_identity[0]
+
+					if request.user.is_authenticated():
+						user = request.user
+						if UserProfile.objects.filter(user=user):
+							user_profile = user.profile
+						else:
+							user_profile = UserProfile(user=user)
+							user_profile.save()
+						context['error'] = 'Reg ok old local user'
+					else:
+						user = User()
+
+						user.username = context['loginza_data']['email']
+						# user.first_name = userData['first_name']
+						# user.last_name = userData['last_name']
+						user.email = context['loginza_data']['email']
+						user.set_password('password')
+						user.save()
+
+						# Заполняем профиль
+						user_profile = UserProfile(user=user)
+						# user_profile.save()
+						context['error'] = 'Reg ok new user'
+
+					user.get_profile().identity.add(new_identity)
+					user.get_profile().save()
+
+					user.backend = 'django.contrib.auth.backends.ModelBackend'
+					# user = authenticate(username=user.username, password='password')
+					login(request, user)
+
+					return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+			else:
+				context['error'] = context['loginza_json']
+				return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+		else:
+			context['error'] = 'No token!'
+			return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+	else:
+		context['error'] = 'No POST data!'
+		return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+
+	# return render_to_response('main.html', context, context_instance=RequestContext(request))
 
 
 # Sign Up
