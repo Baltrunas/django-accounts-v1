@@ -9,6 +9,7 @@ import hashlib
 
 
 class Identity(models.Model):
+	user = models.ForeignKey(User, null=True, related_name='identity')
 	identity = models.CharField(_('identity'), max_length=255, unique=True)
 	provider = models.CharField(_('provider'), max_length=255)
 	data = models.TextField(_('data'))
@@ -33,9 +34,10 @@ class UserProfile(models.Model):
 	gender = models.BooleanField(_('Gender'), default=False, choices=GENDER_CHOICES)
 	birthday = models.DateField(blank=True, null=True)
 
-	identity = models.ManyToManyField(Identity, related_name='local_profile', verbose_name=_('Identity'), null=True, blank=True)
-	verified = models.BooleanField(_('active'), default=False, db_index=True)
+	# identity = models.ManyToManyField(Identity, related_name='local_profile', verbose_name=_('Identity'), null=True, blank=True)
+	# verified = models.BooleanField(_('active'), default=False, db_index=True)
 
+	public = models.BooleanField(_('Public'), default=False, db_index=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 

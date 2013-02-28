@@ -1,0 +1,30 @@
+{%extends 'base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+
+{%block content%}
+<h1>{% trans "Register" %}</h1>
+	<form method="post" action="{% url 'accounts_edit' %}" id='register_form'>
+		{% csrf_token %}
+		{%if loginzaUserForm.errors %}<h3><strong>{% trans "Error!" %}</strong></h3>{% endif %}
+		{{ loginzaUserForm.management_form }}
+		{% for field in loginzaUserForm %}
+			<ul class='{% if field.field.required %}required{% else %}not_required{% endif %}'>
+				<li>{{ field.label_tag }}</li>
+				{% if field.errors %}
+					<li>
+						<ul>
+							{% for error in field.errors %}
+								<li>{{ error }}</li>
+							{% endfor %}
+						</ul>
+					</li>
+				{% endif %}
+				<li>{{ field }}</li>
+			</ul>
+		{% endfor %}
+		<input type="submit" value='{% trans "Save" %}'>
+	</form>
+
+{%endblock%}

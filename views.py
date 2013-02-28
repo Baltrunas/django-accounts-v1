@@ -8,6 +8,7 @@ from accounts.models import Identity
 from accounts.models import UserProfile
 from accounts.models import Transaction
 
+from accounts.forms import LoginzaUserForm
 from accounts.forms import UserForm
 from accounts.forms import UserProfileForm
 from accounts.forms import UserEditForm
@@ -42,18 +43,24 @@ def body(url):
 		return False
 
 
+def get_or_none(model, **kwargs):
+	try:
+		return model.objects.get(**kwargs)
+	except:
+	# except model.DoesNotExist:
+		return None
+
+
 # Loginza
 @csrf_exempt
 def loginza(request):
 	context = {}
-	context['request'] = request
-
 	if (request.POST):
 		if 'token' in request.POST:
 			token = request.POST['token']
 			if hasattr(settings, 'ACCOUNTS_LOGINZA_WIDGET') and hasattr(settings, 'ACCOUNTS_LOGINZA_KEY'):
-				id = settings.ACCOUNTS_LOGINZA_WIDGET = 46456
-				key = settings.ACCOUNTS_LOGINZA_KEY = 'd7ce6be4148147e43d10fd5ca708e4d9'
+				id = settings.ACCOUNTS_LOGINZA_WIDGET
+				key = settings.ACCOUNTS_LOGINZA_KEY
 				sig = md5(token + key).hexdigest()
 				loginza_url = 'http://loginza.ru/api/authinfo?token=%s&id=%s&sig=%s' % (token, id, sig)
 			else:
@@ -63,47 +70,50 @@ def loginza(request):
 			context['loginza_data'] = simplejson.loads(context['loginza_json'])
 
 			if 'error_type' not in context['loginza_json']:
-				tmp_identity = Identity.objects.filter(identity=context['loginza_data']['identity'])
-				if tmp_identity:
-					tmp_user = User.objects.filter(profile__identity=tmp_identity[0])
-				if tmp_identity and tmp_user:
-					# identity = Identity.objects.get(identity=context['loginza_data']['identity'])
-					user = User.objects.get(profile__identity=tmp_identity[0])
-
+				identity = get_or_none(Identity, identity=context['loginza_data']['identity'])
+				if identity:
+					user = get_or_none(User, identity=identity)
+				if identity and user:
+					# перекидывать надо не на профиль пользователя, а на пред идушию страницу
 					user.backend = 'django.contrib.auth.backends.ModelBackend'
-
 					login(request, user)
 					return redirect('accounts_accounts')
-
-					# context['error'] = 'Log ok'
-					# return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
 				else:
-					if not tmp_identity:
-						# Создаём loginza данные
-						new_identity = Identity()
-						new_identity.provider = context['loginza_data']['provider']
-						new_identity.identity = context['loginza_data']['identity']
-						new_identity.data = context['loginza_json']
-						new_identity.save()
-					else:
-						new_identity = tmp_identity[0]
-
+					need_change_date = False
 					if request.user.is_authenticated():
 						user = request.user
-						if UserProfile.objects.filter(user=user):
+						if get_or_none(UserProfile, user=user):
 							user_profile = user.profile
 						else:
 							user_profile = UserProfile(user=user)
 							user_profile.save()
-						context['error'] = 'Reg ok old local user'
 					else:
 						user = User()
 
-						user.username = context['loginza_data']['email']
-						# user.first_name = userData['first_name']
-						# user.last_name = userData['last_name']
-						user.email = context['loginza_data']['email']
-						user.set_password('password')
+						if 'email' in context['loginza_data']:
+							user.email = context['loginza_data']['email']
+						else:
+							need_change_date = True
+
+						if 'nickname' in context['loginza_data']:
+							user.username = context['loginza_data']['nickname']
+						elif 'email' in context['loginza_data']:
+							user.username = context['loginza_data']['email'].split('@')[0]
+						else:
+							user.username = md5('salt_name' + str(datetime.datetime.now())).hexdigest()[:8]
+							need_change_date = True
+
+						if get_or_none(User, username=user.username):
+							user.username += '_' + md5(str(datetime.datetime.now())).hexdigest()[:4]
+							need_change_date = True
+
+						if 'name' in context['loginza_data']:
+							if 'first_name' in context['loginza_data']['name']:
+								user.first_name = context['loginza_data']['name']['first_name']
+							if 'last_name' in context['loginza_data']['name']:
+								user.last_name = context['loginza_data']['name']['last_name']
+
+						user.set_password(md5('salt' + str(datetime.datetime.now())).hexdigest()[:16])
 						user.save()
 
 						# Заполняем профиль
@@ -111,22 +121,39 @@ def loginza(request):
 						# user_profile.save()
 						context['error'] = 'Reg ok new user'
 
-					user.get_profile().identity.add(new_identity)
-					user.get_profile().save()
+					if not identity:
+						# Создаём loginza данные
+						identity = Identity()
+						identity.user = user
+						identity.provider = context['loginza_data']['provider']
+						identity.identity = context['loginza_data']['identity']
+						identity.data = context['loginza_json']
+						identity.save()
+
+					if need_change_date:
+						user.backend = 'django.contrib.auth.backends.ModelBackend'
+						login(request, user)
+
+						loginzaUserForm = LoginzaUserForm(instance=user)
+						context['loginzaUserForm'] = loginzaUserForm
+						return render_to_response('accounts/loginza_register.html', context, context_instance=RequestContext(request))
 
 					user.backend = 'django.contrib.auth.backends.ModelBackend'
 					# user = authenticate(username=user.username, password='password')
 					login(request, user)
 
-					return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+					return redirect('home')
+
+					# return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
 			else:
-				context['error'] = context['loginza_json']
-				return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+				context['error'] = context['loginza_data']['error_message']
+				return render_to_response('accounts/login.html', context, context_instance=RequestContext(request))
 		else:
-			context['error'] = 'No token!'
-			return render_to_response('accounts/loginza_error.html', context, context_instance=RequestContext(request))
+			context['error'] = _('No token!')
+			return render_to_response('accounts/login.html', context, context_instance=RequestContext(request))
 	else:
-		return redirect('accounts_login', error=_('No POST date!'))
+		context['error'] = _('No POST date!')
+		return render_to_response('accounts/login.html', context, context_instance=RequestContext(request))
 
 
 # Sign Up

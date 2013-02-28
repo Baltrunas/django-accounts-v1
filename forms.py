@@ -17,6 +17,13 @@ class DataInput(Input):
 	input_type = 'date'
 
 
+class LoginzaUserForm(forms.ModelForm):
+	username = forms.CharField(max_length=30, label=_('Log In'))
+	first_name = forms.CharField(max_length=30, required=False, label=_('First Name'))
+	last_name = forms.CharField(max_length=30, required=False, label=_('Last Name'))
+	email = forms.CharField(max_length=30, widget=Html5EmailInput(attrs={'placeholder': 'user@example.com', 'required': 'required'}), label=_('E-Mail'))
+
+
 class UserForm(forms.ModelForm):
 	username = forms.CharField(max_length=30, label=_('Log In'))
 	first_name = forms.CharField(max_length=30, required=False, label=_('First Name'))
