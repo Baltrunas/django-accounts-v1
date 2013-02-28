@@ -1,7 +1,11 @@
 {%extends 'base.html'%}
 {%block content%}
 <h1>Вход</h1>
-<center>
+<p>
+	Вы можете войти используя свой логин или пароль либо используя один из своих социальных профилей. Ну а если <s>ты лох и у тебя нет друзей</s> у вас нету ни логина ни профиля в социальных сетях вы можете <a href='/accounts/signup/'>зарегестрироваться</a>.
+</p>
+
+<div class="b-login__login-local">
 	<form method="post" action="">
 		{% csrf_token %}
 		<p><label for="id_username">Логин:</label> <input id="id_username" type="text" name="username" maxlength="30"></p>
@@ -9,5 +13,10 @@
 		<input type="submit" value="Войти">
 		<input type="hidden" name="next" value="{% url home %}">
 	</form>
-</center>
+</div>
+
+<div class="b-login__login_loginza">
+	<script src="http://loginza.ru/js/widget.js" type="text/javascript"></script>
+	<iframe src="http://loginza.ru/api/widget?overlay=loginza&token_url=http://[RETURN_URL]" style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
+</div>
 {%endblock%}
