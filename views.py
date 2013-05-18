@@ -55,6 +55,7 @@ def get_or_none(model, **kwargs):
 @csrf_exempt
 def loginza(request):
 	context = {}
+	context['title'] = _('Sign in')
 	if (request.POST):
 		if 'token' in request.POST:
 			token = request.POST['token']
@@ -77,7 +78,8 @@ def loginza(request):
 					# перекидывать надо не на профиль пользователя, а на пред идушию страницу
 					user.backend = 'django.contrib.auth.backends.ModelBackend'
 					login(request, user)
-					return redirect('accounts_accounts')
+					# return redirect('accounts_accounts')
+					return redirect('home')
 				else:
 					need_change_date = False
 					if request.user.is_authenticated():
@@ -162,7 +164,8 @@ def signup(request):
 	context['title'] = _('Register')
 	user = User()
 	if request.user.is_authenticated():
-		return redirect('accounts_accounts')
+		# return redirect('accounts_accounts')
+		return redirect('home')
 	userProfile = UserProfile()
 	if request.method == 'POST':
 		userForm = UserForm(request.POST, instance=user)
@@ -184,7 +187,8 @@ def signup(request):
 
 			user = authenticate(username=userData['username'], password=userData['password'])
 			login(request, user)
-			return redirect('accounts_accounts')
+			# return redirect('accounts_accounts')
+			return redirect('home')
 	else:
 		userForm = UserForm(instance=user)
 		userProfileForm = UserProfileForm(instance=userProfile)

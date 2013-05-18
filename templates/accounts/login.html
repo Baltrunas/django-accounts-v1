@@ -1,32 +1,38 @@
 {%extends 'base.html'%}
 
-{% load url from future %}
 {% load i18n %}
 
 {%block content%}
-	<h1>{% trans "Login" %}</h1>
+	<h1>{% trans "Sign in" %}</h1>
 	{% if error %}
-		<h3>{{ error }}</h3>
+		<h3 class='m-error'>{{ error }}</h3>
 	{% endif %}
-	<p>
-		Вы можете войти используя свой логин или пароль либо используя один из своих социальных профилей. Ну а если <s>ты лох и у тебя нет друзей</s> у вас нету ни логина ни профиля в социальных сетях вы можете <a href='/accounts/signup/'>зарегестрироваться</a>.
+	<p class='b-login__help-text'>
+		{% trans "You can log in using your username and password or by using one of your social profiles." %}
 	</p>
-	<div class="b-login__login-local">
+
+	<div class="b-login-local">
 		<form method="post" action="{% url 'accounts_login' %}">
 			{% csrf_token %}
-			<p><label for="id_username">{% trans "Username" %}:</label> <input id="id_username" type="text" name="username" maxlength="30"></p>
-			<p><label for="id_password">{% trans "Password" %}:</label> <input type="password" name="password" id="id_password"></p>
-			<input type="submit" value="Log In">
+			<label for="id_username">{% trans "Login" %}:</label>
+			<input id="id_username" type="text" name="username" maxlength="30" class='b-login-local_input'>
+
+			<label for="id_password">{% trans "Password" %}:</label>
+			<input type="password" name="password" id="id_password" class='b-login-local_input'>
+
 			<input type="hidden" name="next" value="{% url 'home' %}">
+
+			<input type="submit" value="{% trans "Log in" %}" class='b-login-local_submit'>
 		</form>
 	</div>
 
 	<div class="b-login__or">{% trans "or" %}</div>
 
-	<div class="b-login__login_loginza">
+	<div class="b-login-loginza">
 		<script src="http://loginza.ru/js/widget.js" type="text/javascript"></script>
-		<iframe src="http://loginza.ru/api/widget?overlay=loginza&token_url=http://{{ site.domain }}{% url 'accounts_loginza' %}" style="width:420px;height:200px;" scrolling="no" frameborder="no"></iframe>
+		<iframe src="http://loginza.ru/api/widget?overlay=loginza&token_url=http://{{ site.domain }}{% url 'accounts_loginza' %}" class='b-login-login_loginza__iframe'></iframe>
 	</div>
+
 {%endblock%}
 
 {% block aside %}

@@ -39,6 +39,42 @@ I thing about
 * В списке на против каждого соц логина кнопки удалить или зделать основным и синхронизировать (импортировать)
 * Ник (логин) не меняется или меняется только если это возможно
 
+rating ±
+	object
+	object_id
+	rating ±1
+	user
+
+	ip
+
+	publick
+	created
+	updated
+
+
+rating (5)
+	object
+	object_id
+	category
+	rating (5)
+	user
+
+	ip
+
+	publick
+	created
+	updated
+
+rating_cache (5)
+	object
+	object_id
+	category
+	rating (5)
+	publick
+	created
+	updated
+
+
 # ChangeLog
 ## 2013.02.28
 ### Fix

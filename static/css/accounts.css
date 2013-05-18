@@ -1,0 +1,149 @@
+/*
+ **************************
+ * =widget
+ **************************
+*/
+.b-user-widget {
+	padding: 0;
+	margin: 0;
+	margin-bottom: 25px;
+	overflow: hidden;
+	width: 200px;
+	display: block;
+	clear: both;
+}
+
+.b-user-widget__name {
+	font: bold 12px 'PT Sans', sans-serif;
+	clear: right;
+	margin: 0;
+	padding: 0;
+}
+
+.b-user-widget__photo {
+	width: 60px;
+	float: left;
+	margin-right: 20px;
+}
+
+.b-user-widget__notyou,
+.b-user-widget__logout {
+	font-size: 10px;
+	display: inline-block;
+	margin-top: 7px;
+}
+
+.b-user-widget__logout {
+	background: url(../img/exit.png) no-repeat right;
+	padding-right: 15px;
+}
+
+
+/*
+ **************************
+ * =loginza bottom
+ **************************
+*/
+.b-loginza-button {
+	z-index: 300;
+	width: 165px;
+	height: 47px;
+	display: block;
+	background: url(../img/loginza.png) 0 -98px no-repeat;
+	text-decoration: none;
+	color: transparent;
+}
+
+.b-loginza-button:hover {
+	/*background: url(../img/loginza.png) 0 0 no-repeat;*/
+	background-position: 0 0;
+}
+
+.b-loginza-button:active {
+	/*background: url(../img/loginza.png) 0 -49px no-repeat;*/
+	background-position: 0 -49px;
+}
+
+
+/*
+ **************************
+ * =login page
+ **************************
+*/
+.b-login__help-text {
+	width: 450px;
+	font-size: 14px;
+	color: #333;
+}
+
+.b-login__or {
+	text-align: center;
+	line-height: 170px;
+	width: 180px;
+	height: 170px;
+	display: block;
+	margin: 0;
+	font-size: 14px;
+	float: left;
+}
+
+.b-login-local,
+.b-login-loginza {
+	width: 380px;
+	height: 170px;
+	display: block;
+	margin: 0;
+	float: left;
+}
+
+.b-login-local {
+	padding-top: 5px;
+}
+
+.b-login-local label {
+	display: inline-block;
+	width: 80px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.b-login-local .b-login-local_input {
+	display: inline-block;
+	margin: 20px 0;
+	width: 300px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 18px;
+	color: #666;
+	padding: 5px;
+	border: 1px solid #ddd;
+}
+
+.b-login-local_submit {
+	width: 145px;
+	height: 42px;
+	border: 0;
+	color: transparent;
+	float: right;
+	outline: 0;
+	background: url(../img/log_in.png) no-repeat;
+}
+
+.b-login-local_submit:hover {
+	opacity: 0.9;
+}
+
+.b-login-local_submit:active {
+	margin-top: 1px;
+}
+
+.b-login-login_loginza__iframe {
+	width: 380px;
+	height: 170px;
+	overflow: hidden;
+	border: 0;
+}
+
+.m-error {
+	color: #d2232a;
+}

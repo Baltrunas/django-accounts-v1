@@ -7,6 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 import urllib
 import hashlib
 
+from django.utils import simplejson
+from django.conf import settings
+
 
 class Identity(models.Model):
 	user = models.ForeignKey(User, null=True, related_name='identity')
@@ -43,10 +46,28 @@ class UserProfile(models.Model):
 
 	# objects = UserMapManager()
 
+	def get_photo(self):
+		photos = []
+		for identity in self.user.identity.all():
+			data = simplejson.loads(identity.data)
+			if 'photo' in data:
+				photos.append(data['photo'])
+		if photos:
+			return photos[0]
+		else:
+			return self.gravatar()
+
 	def gravatar(self):
-		size = 70
+		if hasattr(settings, 'ACCOUNTS_DEFAULT_IMAGE_SIZE'):
+			size = settings.ACCOUNTS_DEFAULT_IMAGE_SIZE
+
+		if hasattr(settings, 'ACCOUNTS_DEFAULT_IMAGE'):
+			default = settings.ACCOUNTS_DEFAULT_IMAGE
+		else:
+			default = ''
+
 		url = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.user.email.lower()).hexdigest() + '?'
-		url += urllib.urlencode({'s': str(size)})
+		url += urllib.urlencode({'s': str(size), 'd': default})
 		return url
 
 	def __unicode__(self):
