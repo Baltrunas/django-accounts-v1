@@ -3,7 +3,7 @@
 <div class='b-user-widget'>
 	{% if user.is_authenticated %}
 		<img class='b-user-widget__photo' src="{{ user.get_profile.gravatar }}&s=120" alt="{{ user.username }}">
-		<span class='b-user-widget__name'>
+		<a class='b-user-widget__name' href='/accounts/{{ user.username }}/'>
 			{% if user.first_name or user.last_name %}
 				{{ user.first_name }}
 				{{ user.last_name }}
@@ -12,13 +12,13 @@
 			{% else %}
 				user_{{ user.id }}
 			{% endif %}
-		</span>
+		</a>
 		<br>
 		<a class='b-user-widget__notyou' href="/accounts/logout/">{% trans "Not you?" %}</a><br>
 		<a class='b-user-widget__logout' href="/accounts/logout/">{% trans "Exit" %}</a>
 	{% else %}
 		<script src="http://loginza.ru/js/widget.js" type="text/javascript"></script>
-		<a href="http://loginza.ru/api/widget?token_url=http://enot.kg/accounts/loginza/&lang=ru&provider=facebook" class='b-loginza-button'>
+		<a href="http://loginza.ru/api/widget?token_url=http://{{ site.domain }}/accounts/loginza/&lang=ru" class='b-loginza-button'>
 			Войти через соцсети
 		</a>
 	{% endif %}

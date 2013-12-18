@@ -1,15 +1,22 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
+
 {% load i18n %}
 
-{%block content%}
-<h1>{% trans "Register" %}</h1>
+{% block content %}
+	<h1>{% trans "Register" %}</h1>
+
 	<form method="post" action="" id='register_form'>
 		{% csrf_token %}
-		{%if userForm.errors %}<h3><strong>{% trans "Error!" %}</strong></h3>{% endif %}
+
+		{% if userForm.errors %}
+			<h3 class='m-error'>{% trans "Error!" %}</h3>
+		{% endif %}
+
 		{{ userForm.management_form }}
+
 		{% for field in userForm %}
-			<ul class='{% if field.field.required %}required{% else %}not_required{% endif %}'>
-				<li>{{ field.label_tag }}</li>
+			<ul class='{% if field.field.required %}required{% else %}not_required{% endif %} b-register-field'>
+				<li class='b-register-field-label'>{{ field.label_tag }}</li>
 				{% if field.errors %}
 					<li>
 						<ul>
@@ -19,15 +26,15 @@
 						</ul>
 					</li>
 				{% endif %}
-				<li>{{ field }}</li>
+				<li class='b-register-field-field'>{{ field }}</li>
 			</ul>
 		{% endfor %}
 
 		{%if userProfileForm.errors %}<h3><strong>{% trans "Error!" %}</strong></h3>{% endif %}
 		{{ userProfileForm.management_form }}
 		{% for field in userProfileForm %}
-			<ul class='{% if field.field.required %}required{% else %}not_required{% endif %}'>
-				<li>{{ field.label_tag }}</li>
+			<ul class='{% if field.field.required %}required{% else %}not_required{% endif %} b-register-field'>
+				<li class='b-register-field-label'>{{ field.label_tag }}</li>
 				{% if field.errors %}
 					<li>
 						<ul>
@@ -37,24 +44,28 @@
 						</ul>
 					</li>
 				{% endif %}
-				<li>{{ field }}</li>
+				<li class='b-register-field-field'>{{ field }}</li>
 			</ul>
 		{% endfor %}
 
-		<input type="submit" value='{% trans "Register" %}'>
+		<span class='b-show-not-required'>
+			{% trans "Show not required fields" %}
+		</span>
+
+		<input type="submit" value='{% trans "Register" %}' class='b-register_submit'>
 	</form>
 
-	<a href="javascript:retirn 0;" id="show_not_required">{% trans "Show not required fields" %}</a>
 	<script type="text/javascript">
-	$('.not_required').hide();
-	$('#show_not_required').on('click', function(){
-		if($('.not_required').is(':hidden')){
-			$('.not_required').slideDown();
-			$('#show_not_required').text('{% trans "Hide not required fields" %}');
-		} else {
-			$('.not_required').slideUp();
-			$('#show_not_required').text('{% trans "Show not required fields" %}');
-		}
-	});
+		$('.not_required').hide();
+		$('.b-show-not-required').on('click', function() {
+			var $this = $(this);
+			if($('.not_required').is(':hidden')) {
+				$this.text('{% trans "Hide not required fields" %}');
+				$('.not_required').slideDown();
+			} else {
+				$this.text('{% trans "Show not required fields" %}');
+				$('.not_required').slideUp();
+			}
+		});
 	</script>
 {%endblock%}

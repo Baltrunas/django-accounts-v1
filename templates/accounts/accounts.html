@@ -1,138 +1,81 @@
 {% extends 'base.html' %}
+
 {% load i18n %}
 {% load currency %}
+{% load ratings_tags %}
+
 {% block content %}
+	<h1 class='b-account__title'>Ваш профиль</h1>
+	<hr class='b-account__title_line'>
+	<div class="b-account-info">
+		<div class="b-account-info-photo">
+			<img src="{{ user_account.get_profile.get_photo }}" alt="{{ user_account.username }}" class='b-account-info__img'>
+		</div>
 
-<h1>{{ user.username }}</h1>
-	<img src="{{ user.get_profile.gravatar }}&s=500" alt="{{ user.username }}" width="250" align='right'>
-	<b>{{ user.first_name }} {{ user.last_name }}</b>
+		<div class="b-account-info-info">
+			<h2>
+				{% if user_account.first_name or user_account.last_name %}
+					{{ user_account.first_name }} {{ user_account.last_name }}
+				{% else %}
+					{{ user_account.username }}
+				{% endif %}
+			</h2>
 
-	<p><b>{% trans "Balance" %}</b>: {{ balance.total__sum|currency:2 }} <i>Р.</i></p>
+			<div class='b-carma'><b>Карма:</b> 
+				{% ratings_plus user_account user_account %}
+			</div>
 
-	<p><b>{% trans "E-Mail" %}:</b> {{ user.email }}</p>
-	<p><b>{% trans "Gender" %}:</b> {{ user.get_profile.gender }}</p>
-	<p><b>{% trans "Birthday" %}:</b> {{ user.get_profile.birthday }}</p>
-	<p><b>{% trans "Created At" %}:</b> {{ user.get_profile.created_at }}</p>
-	<p><b>{% trans "Updated At" %}:</b> {{ user.get_profile.updated_at }}</p>
+			{% if user == user_account %}
+				<p class='b-manna'>
+					<b>Манна:</b>
+					<span class="b-manna__value">{{ user_account.get_profile.manna }}</span>
+				</p>
+			{% endif %}
 
-	<p><b><a href="/accounts/edit/">{% trans "Edit Profile" %}</a></b></p>
+			{# <p><b>karma:</b> {{ user_account.get_profile.karma }}</p> #}
+			<p class='b-user-rating-profile'>
+				<b>Рейтинг:</b>
+				<span class="b-rating__value">{{ user_account.get_profile.rating }}</span>
+			</p>
 
-	<table class='data'>
-		<tr class='one'>
-			<td>{% trans "Date" %}</td>
-			<td>{% trans "Total" %}</td>
-		</tr>
-		{% for day in days %}
-			<tr>
-				<td>{{ day.date|date }}</td>
-				<td>{{ day.total|currency:2 }} р.</td>
-			</tr>
+			<p class='b-num-in-rate'>
+				<b>№ в <a href='{% url 'accounts_rating' %}'>рейтинге</a>:</b>
+				<span class='b-num-in-rate__value'>{{ user_position }} из {{ users_count }}</span>
+			</p>
+
+
+
+
+			<p class='b-accounts-email'><b>{% trans "E-Mail" %}:</b> {{ user_account.email }}</p>
+			<p class='b-accounts-gender'><b>{% trans "Gender" %}:</b> {{ user_account.get_profile.gender }}</p>
+
+			{% if user_account.get_profile.birthday %}
+				<p><b>{% trans "Birthday" %}:</b> {{ user_account.get_profile.birthday }}</p>
+			{% endif %}
+
+			{% comment %}
+			<p><b>{% trans "Created At" %}:</b> {{ user_account.get_profile.created_at }}</p>
+			<p><b>{% trans "Updated At" %}:</b> {{ user_account.get_profile.updated_at }}</p>
+			{% endcomment %}
+		</div>
+	</div><!-- b-account-info -->
+
+	<div class="b-account-comments">
+		<h3>{% trans "Comments" %}</h3>
+		{% for comment in comments %}
+			<div class='b-account-item'>
+				<a href="{{ comment.content_object.get_absolute_url }}">
+					{{ comment.content_object }}
+				</a>
+				<div class='b-user-comment-rating'>
+					{% ratings_plus comment comment.user %}
+				</div>
+				<div class='b-user-comment-comment'>
+					{{ comment.comment }}
+				</div>
+			</div>
 		{% endfor %}
-	</table>
-
-	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script type="text/javascript">
-		google.load("visualization", "1", {packages:["corechart"]});
-		google.setOnLoadCallback(drawChart);
-		function drawChart() {
-			var data = google.visualization.arrayToDataTable([
-				['Date', 'Total'],
-
-{% for day in days %}
-	['{{ day.date|date }}', {{ day.total|stringformat:"f" }}],
-{% endfor %}
-
-			]);
-
-			var options = {
-				title: 'Финансовая статистика'
-			};
-
-			var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-			chart.draw(data, options);
-		}
-	</script>
-	<div id="chart_div" style="width: 1200px; height: 500px;"></div>
-
-
-
-
-{% comment %}
-<h3>Товары и услуги:</h3>
-<table class='data'>
-	{% for item in order %}
-		<tr>
-			<form method='POST' action='/magazine/checkout/'> 
-			{% csrf_token %}
-				<td>#{{ item.id }}</td>
-				<td>{{ item.price.name }}</td>
-				<td>{{ item.get_status_display }}</td>
-				<td>{{ item.total_price }}</td>
-				<td>{{ item.added }}</td>
-				<td>{{ item.updated }}</td>
-				<td>{{ item.paid_for }}</td>
-				<td>{{ item.count }}</td>
-				<td>{{ item.last_price }}</td>
-				<!--td>{{ item.text }}</td-->
-				
-				<!--td style='width:100px'>{{ price.count }}</td-->
-				<td style='width:150px'>
-					<input type='hidden' value='{{ item.price.id }}' name='price'>
-					<input type='hidden' value='{{ item.id }}' name='order'>
-					<input name='save' type="submit" value="Продлить" style='margin: 0px;'>
-				</td>
-				<!--td style='width:150px'><input name='delet' type="submit" value="Удалить" style='margin: 0px;'></td-->
-			</form>
-		</tr>
-	{% endfor %}
-</table>
-<p>Итого: <b>{{basket_summ}}</b></p>
-
-<h3>Платежи:</h3>
-<table class='data'>
-	{% for item in payments %}
-	<tr>
-		<td>#{{ item.id }}</td>
-		<td>{{ item.get_status_display }}</td>
-		<td>{{ item.total_price }}</td>
-		<td>{{ item.text }}</td>
-		<td>{{ item.created }}</td>
-		<td>{{ item.updated }}</td>
-		<td>{{ item.paid }}</td>
-		<!--td style='width:100px'>{{ price.count }}</td-->
-		<!--td style='width:150px'><input name='save' type="submit" value="Сохранить" style='margin: 0px;'></td-->
-		<!--td style='width:150px'><input name='delet' type="submit" value="Удалить" style='margin: 0px;'></td-->
-	</tr>
-	{% endfor %}
-</table>
-<p>Итого: <b>{{basket_summ}}</b></p>
-
-
-<h3>Заказы:</h3>
-<table class='data'>
-	{% for item in basket %}
-		<tr>
-			<form method='POST' action='/magazine/checkout/'> 
-			{% csrf_token %}
-				<td>{{ item.id }}</td>
-				<td>{{ item.price.name }}</td>
-				<td>{{ item.get_status_display }}</td>
-				<td>{{ item.total_price }}</td>
-				<td>{{ item.added }}</td>
-				<td>{{ item.updated }}</td>
-				<td>{{ item.paid }}</td>
-				<td>{{ item.order.id }}</td>
-				<td>{{ item.count }}</td>
-				<td>{{ item.pay.id }}</td>
-				<!--td style='width:100px'>{{ price.count }}</td-->
-				<!--td style='width:150px'><input name='save' type="submit" value="Сохранить" style='margin: 0px;'></td-->
-				<!--td style='width:150px'><input name='delet' type="submit" value="Удалить" style='margin: 0px;'></td-->
-			</form>
-		</tr>
-	{% endfor %}
-</table>
-<p>Итого: <b>{{basket_summ}}</b></p>
-{% endcomment %}
+	</div>
 
 <!--
 {% trans "Not you?" %}
@@ -140,3 +83,10 @@
 -->
 
 {%endblock%}
+
+
+{% block aside %}
+	<style>
+		section, article {width: 980px;}
+	</style>
+{% endblock aside %}

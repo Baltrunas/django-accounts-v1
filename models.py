@@ -40,6 +40,10 @@ class UserProfile(models.Model):
 	# identity = models.ManyToManyField(Identity, related_name='local_profile', verbose_name=_('Identity'), null=True, blank=True)
 	# verified = models.BooleanField(_('active'), default=False, db_index=True)
 
+	manna = models.DecimalField(verbose_name=_('Manna'), max_digits=10, decimal_places=2, default=0)
+	karma = models.DecimalField(verbose_name=_('Karma'), max_digits=10, decimal_places=2, default=0)
+	rating = models.DecimalField(verbose_name=_('Rating'), max_digits=10, decimal_places=2, default=0)
+
 	public = models.BooleanField(_('Public'), default=False, db_index=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

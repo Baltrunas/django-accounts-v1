@@ -13,16 +13,23 @@ from accounts.forms import UserForm
 from accounts.forms import UserProfileForm
 from accounts.forms import UserEditForm
 
+from comments.models import ExtensiveComment
+
 from django.shortcuts import render_to_response
+from django.shortcuts import get_object_or_404
+
 from django.template import RequestContext
 # from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 from django.views.decorators.csrf import csrf_exempt
 
 import urllib2
 
 from django.db.models import Sum
+
+from ratings.models import TotalRatingPlus
 
 from django.shortcuts import redirect
 
@@ -199,36 +206,20 @@ def signup(request):
 
 # Profile
 @login_required
-def my_profile(request):
+def profile(request, username):
 	context = {}
-	user = request.user
-	context['title'] = user.username
+	user_account = get_object_or_404(User, username=username)
+	context['users_count'] = User.objects.all().count()
+	# context['user_position'] = User.objects.filter(sortField__lt = myObject.sortField).count()
+
+	context['user_position'] = User.objects.filter(profile__rating__gt=user_account.get_profile().rating).order_by('-profile__rating').count() + 1
+
+	context['title'] = user_account.username
+	context['comments'] = ExtensiveComment.objects.filter(user=user_account)[:10]
 	# context['basket'] = Basket.objects.filter(user=user)
 	# context['payments'] = Pay.objects.filter(user=user)
 
-	base = datetime.datetime.today()
-	dateList = [base + datetime.timedelta(days=x) for x in range(-14, 1)]
-
-	days = []
-
-	for for_date in dateList:
-		total = Transaction.objects.filter(
-				user=user,
-				public=True,
-				total__lte=0,
-				created_at__year=for_date.year,
-				created_at__month=for_date.month,
-				created_at__day=for_date.day
-		).aggregate(Sum('total'))
-		if total['total__sum']:
-			total = total['total__sum'] * -1
-		else:
-			total = 0
-		days.append({'date': for_date, 'total': total})
-
-	context['days'] = days
-	context['balance'] = Transaction.objects.filter(user=user, public=True).aggregate(Sum('total'))
-	context['user'] = user
+	context['user_account'] = user_account
 	return render_to_response('accounts/accounts.html', context, context_instance=RequestContext(request))
 
 
@@ -269,3 +260,32 @@ def edit(request):
 	context['AccountsUserEditForm'] = AccountsUserEditForm
 	context['user'] = user
 	return render_to_response('accounts/edit.html', context, context_instance=RequestContext(request))
+
+
+@login_required
+def rating(request):
+	context = {}
+	context['title'] = _('User ratings')
+	context['users'] = User.objects.all().order_by('-profile__rating')
+
+	for u in context['users']:
+		content_type = ContentType.objects.get_for_model(u)
+
+		rating = TotalRatingPlus.objects.filter(public=True, to_user=u).aggregate(Sum('rating'))
+		karma = TotalRatingPlus.objects.filter(public=True, to_user=u, content_type=content_type, object_id=u.id).aggregate(Sum('rating'))
+
+		userProfile = u.get_profile()
+
+		if rating['rating__sum']:
+			userProfile.rating = rating['rating__sum']
+		else:
+			userProfile.rating = 0
+
+		if karma['rating__sum']:
+			userProfile.karma = karma['rating__sum']
+		else:
+			userProfile.karma = 0
+
+		userProfile.save()
+
+	return render_to_response('accounts/rating.html', context, context_instance=RequestContext(request))

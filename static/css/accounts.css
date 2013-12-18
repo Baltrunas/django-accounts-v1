@@ -55,12 +55,12 @@
 }
 
 .b-loginza-button:hover {
-	/*background: url(../img/loginza.png) 0 0 no-repeat;*/
+	color: transparent;
 	background-position: 0 0;
 }
 
 .b-loginza-button:active {
-	/*background: url(../img/loginza.png) 0 -49px no-repeat;*/
+	color: transparent;
 	background-position: 0 -49px;
 }
 
@@ -146,4 +146,128 @@
 
 .m-error {
 	color: #d2232a;
+}
+
+
+/*
+ **************************
+ * =REGISTER PAGE
+ **************************
+*/
+.b-show-not-required {
+	display: inline-block;
+	margin: 10px 0;
+	border-bottom: 1px dotted #00aeef;
+	color: #00aeef;
+	padding: 0;
+	cursor: pointer;
+	clear: both;
+}
+
+.b-register_submit {
+	clear: both;
+	display: block;
+}
+
+.b-register-field {
+	display: block;
+	clear: both;
+	list-style: none;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.b-register-field-label {
+	display: inline-block;
+	width: 220px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.b-register-field-field  {
+	display: inline-block;
+}
+
+.b-register-field-field input {
+	display: inline-block;
+	margin: 10px 0;
+	width: 270px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 18px;
+	color: #666;
+	padding: 5px;
+	border: 1px solid #ddd;
+}
+
+.b-register-field-field ul {
+	padding: 0;
+	margin: 0;
+}
+
+.b-register-field-field li,
+.b-register-field-field li input {
+	display: inline-block;
+	width: auto;
+	margin-right: 8px;
+}
+
+.b-register_submit {
+	width: 145px;
+	height: 42px;
+	border: 0;
+	color: transparent;
+	margin-left: 345px;
+	/*float: right;*/
+	outline: 0;
+	background: url(../img/log_in.png) no-repeat;
+}
+
+.b-register_submit:hover {
+	opacity: 0.9;
+}
+
+.b-register_submit:active {
+	margin-top: 1px;
+}
+
+/*
+ **************************
+ * =ACCOUNT
+ **************************
+*/
+
+.b-account-info,
+.b-account-comments {
+	display: block;
+	float: left;
+	box-sizing: border-box;
+}
+
+.b-account-info {
+	width: 500px;
+}
+
+.b-account-comments {
+	width: 480px;
+}
+
+.b-account-info-photo {
+	width: 130px;
+	float: left;
+}
+
+.b-account-info__img {
+	width: 130px;
+	height: 130px;
+	display: inline-block;
+}
+
+.b-account-info-info {
+	padding-left: 20px;
+	box-sizing: border-box;
+	float: left;
+	width: 350px;
+	display: inline-block;
 }

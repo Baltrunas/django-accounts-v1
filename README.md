@@ -31,6 +31,17 @@ To analization
 * https://loginza.ru/api-overview
 * https://loginza.ru/signin-integration
 
+
+
+манна - баланс
+карма
+	рейтиг пользователя
+
+рейтинг =
+	+ рейтинг поста * 10
+	+ рейтинг комента
+
+
 I thing about
 * Нужно ли выделять основного OAuth провайдера?
 * Дата последней синхронизации с каким либо из OAuth провайдеров?
@@ -38,41 +49,6 @@ I thing about
 * В профиле зделать добавление соц логинов
 * В списке на против каждого соц логина кнопки удалить или зделать основным и синхронизировать (импортировать)
 * Ник (логин) не меняется или меняется только если это возможно
-
-rating ±
-	object
-	object_id
-	rating ±1
-	user
-
-	ip
-
-	publick
-	created
-	updated
-
-
-rating (5)
-	object
-	object_id
-	category
-	rating (5)
-	user
-
-	ip
-
-	publick
-	created
-	updated
-
-rating_cache (5)
-	object
-	object_id
-	category
-	rating (5)
-	publick
-	created
-	updated
 
 
 # ChangeLog
