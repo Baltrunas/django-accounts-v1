@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load thumbnail %}
 
 {% block content %}
 <h1>{{ profile.get_user_type_display }}: <b>&laquo;{{ user.username }}&raquo;</b></h1>
 <div class="b-profile">
+	<a href="#" class="b-profile__logo">
+		{% if profile.logo %}
+			{% thumbnail profile.logo '200x200' crop='center' as im %}
+				<img src="{{ im.url }}" alt="{{ profile.username }}">
+			{% endthumbnail %}
+		{% else %}
+			<img src="/templates/img/no_photo.png" alt="{% trans "No Photo" %}" width="200" height="200">
+		{% endif %}
+	</a>
 	<dl class="b-contact">
 		{% if profile.category.all %}
 			<dt>{% trans "Type of works" %}:</dt>
@@ -42,22 +52,15 @@
 		<dt>{% trans "Delivery" %}:</dt>
 		<dd>{% if profile.delivery %}{% trans "Yes" %} {% else %}{% trans "No" %}{% endif %}</dd>
 	</dl>
-	<a href="#" class="b-profile__logo">
-		{% if profile.logo %}
-			<img src="{{ profile.logo }}" alt="{{ profile.username }}">
-		{% else %}
-			<img src="/templates/img/no_photo.png" alt="{% trans "No Photo" %}">
-		{% endif %}
-	</a>
 	{% if profile == user %}
 		<div class="b-profile__href">
-			<a href="{% url 'accounts_edit_profile' %}" class="b-form__submit">{% trans "Edit profile" %}</a><br>
-			<a href="{% url 'password_change' %}" class="b-form__submit">{% trans "Change password" %}</a><br>
-			<a href="{% url 'billboard_ad_add' %}" class="b-form__submit">{% trans "Add Ad" %}</a><br>
+			<a href="{% url 'accounts_edit_profile' %}" class="b-form__submit">Редактировать профиль</a>
+			<a href="{% url 'password_change' %}" class="b-form__submit">{% trans "Change password" %}</a>
+			<a href="{% url 'billboard_ad_add' %}" class="b-form__submit">Добавить объявление</a>
 		</div>
 	{% endif %}
 </div>
-<h2>{% trans "All ads by user" %}</h2>
+<h2>Все объявления пользователя</h2>
 {% include 'billboard/blocks/ad_list.html' %}
 
 <div id="disqus_thread"></div>

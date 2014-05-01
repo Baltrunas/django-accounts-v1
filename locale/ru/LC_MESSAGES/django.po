@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-03 09:19+0000\n"
+"POT-Creation-Date: 2014-05-01 15:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,39 +19,45 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: forms.py:30
+#: forms.py:31
 msgid "Password"
 msgstr "Пароль"
 
-#: forms.py:31
+#: forms.py:32
 msgid "Password (again)"
 msgstr "Пароль (еще раз)"
 
-#: forms.py:32
+#: forms.py:33 templates/accounts/login.html:5
 msgid "Login"
 msgstr "Логин"
 
-#: forms.py:32
+#: forms.py:33
 msgid "30 characters or fewer. Letters, digits and @/./+/-/_ only."
-msgstr "Введите 30 символов или менее. Используйте только буквы, цифры и знаки из набора @/./+/-/_"
+msgstr ""
+"Введите 30 символов или менее. Используйте только буквы, цифры и знаки из "
+"набора @/./+/-/_"
 
-#: forms.py:37
+#: forms.py:38
 msgid "This username is already in use. Please supply a different username."
 msgstr ""
 
-#: forms.py:42
+#: forms.py:43
 msgid ""
 "This email address is already in use. Please supply a different email "
 "address."
 msgstr ""
 
-#: forms.py:48
+#: forms.py:49
 msgid "Passwords do not match!"
 msgstr "Пароли не совпадают"
 
-#: models.py:27 templates/accounts/profile.html:21
+#: models.py:27 templates/accounts/profile.html:26
 msgid "Phone"
 msgstr "Телефон"
+
+#: models.py:27
+msgid "Enter your phone number in this format +996 (555) 12-34-56"
+msgstr "Введите номер телефона в формате: +996 (555) 12-34-56"
 
 #: models.py:28
 msgid "Url"
@@ -81,27 +87,31 @@ msgstr "Компания"
 msgid "Who are you?"
 msgstr "Кто вы?"
 
-#: models.py:38 templates/accounts/profile.html:15
+#: models.py:38 templates/accounts/profile.html:19
 msgid "Type of works"
 msgstr "Типы работ"
 
-#: models.py:39 templates/accounts/profile.html:29
+#: models.py:38
+msgid " "
+msgstr ""
+
+#: models.py:39 templates/accounts/profile.html:37
 msgid "Experience"
 msgstr "Стаж"
 
-#: models.py:40 templates/accounts/profile.html:31
+#: models.py:40 templates/accounts/profile.html:41
 msgid "Number of people in a team"
 msgstr "Количество человек в команде"
 
-#: models.py:41 templates/accounts/profile.html:33
+#: models.py:41 templates/accounts/profile.html:45
 msgid "On the market since"
 msgstr "На рынке с"
 
-#: models.py:42 templates/accounts/profile.html:35
+#: models.py:42 templates/accounts/profile.html:49
 msgid "Location"
 msgstr "Расположение"
 
-#: models.py:43 templates/accounts/profile.html:37
+#: models.py:43 templates/accounts/profile.html:52
 msgid "Delivery"
 msgstr "Доставка"
 
@@ -109,34 +119,46 @@ msgstr "Доставка"
 msgid "Sign in"
 msgstr ""
 
-#: templates/accounts/login.html:5
-msgid "Log In"
-msgstr ""
+#: templates/accounts/edit_profile.html:15
+msgid "Profile"
+msgstr "Профиль"
+
+#: templates/accounts/edit_profile.html:35 templates/accounts/signup.html:15
+#: templates/accounts/signup.html.py:35
+msgid "Sign Up"
+msgstr "Регистрация"
 
 #: templates/accounts/login.html:28
 msgid "Submit"
 msgstr "Отправить"
 
-#: templates/accounts/profile.html:5
-msgid "Profile"
-msgstr "Профиль"
+#: templates/accounts/password_change.html:6
+#: templates/accounts/password_change.html:26
+#: templates/accounts/profile.html:58
+#, fuzzy
+msgid "Change password"
+msgstr "Пароль"
 
-#: templates/accounts/profile.html:11
+#: templates/accounts/password_change_done.html:6
+msgid "Password was successfully changed"
+msgstr ""
+
+#: templates/accounts/profile.html:14
 msgid "No Photo"
 msgstr "Нет фото"
 
-#: templates/accounts/profile.html:23
+#: templates/accounts/profile.html:29
 msgid "Email"
 msgstr ""
 
-#: templates/accounts/profile.html:25
+#: templates/accounts/profile.html:33
 msgid "Web-site"
 msgstr "Веб-сайт"
 
-#: templates/accounts/profile.html:27
-msgid "Type"
+#: templates/accounts/profile.html:53
+msgid "Yes"
 msgstr ""
 
-#: templates/accounts/signup.html:15 templates/accounts/signup.html.py:35
-msgid "Sign Up"
-msgstr "Регистрация"
+#: templates/accounts/profile.html:53
+msgid "No"
+msgstr ""
