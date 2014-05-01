@@ -1,28 +1,38 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from django.contrib import admin
-from accounts.models import UserProfile
-from accounts.models import Transaction
-from accounts.models import Identity
+from accounts.forms import AdminUserChangeForm, AdminUserAddForm
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
+from accounts.models import Location
+from accounts.models import User
 
 
-class UserProfileAdmin(admin.ModelAdmin):
-	list_display = ('user', 'gender', 'birthday')
-	search_fields = ('user', 'gender', 'birthday')
+class LocationAdmin(admin.ModelAdmin):
+	list_display = ['title']
 
-admin.site.register(UserProfile, UserProfileAdmin)
-
-
-class IdentityAdmin(admin.ModelAdmin):
-	list_display = ['id', 'provider', 'identity']
-	list_filter = ['provider']
-
-admin.site.register(Identity, IdentityAdmin)
+admin.site.register(Location, LocationAdmin)
 
 
-class TransactionAdmin(admin.ModelAdmin):
-	list_display = ['user', 'transection_type', 'comment', 'total', 'public', 'created_at', 'updated_at']
-	search_fields = ['user', 'transection_type', 'comment', 'total', 'public', 'created_at', 'updated_at']
-	list_editable = ['public']
-	list_filter = ['total', 'public']
+class UserAdmin(BaseUserAdmin):
+	form = AdminUserChangeForm
+	list_display = ['username', 'email']
+	add_form = AdminUserAddForm
+	fieldsets = (
+		(None,
+			{'fields': ('username', 'password')}
+		),
+		(u'Персональная информация',
+			{'fields': ('email', 'phone', 'url', 'user_type', 'exp', 'team_size', 'year', 'location', 'delivery', )}
+		),
+		(u'Разрешения',
+			{'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}
+		),
+		(u'Даты',
+			{'fields': ('last_login', 'date_joined')}
+		),
+	)
+	add_fieldsets = (
+		(None, {'classes': ('wide',), 'fields': ('username', 'email', 'password1', 'password2')}),
+	)
 
-admin.site.register(Transaction, TransactionAdmin)
+admin.site.register(User, UserAdmin)

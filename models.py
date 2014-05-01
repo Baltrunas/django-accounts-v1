@@ -1,123 +1,59 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-# import code for encoding urls and generating md5 hashes
-import urllib
-import hashlib
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager
 
-from django.utils import simplejson
-from django.conf import settings
+from billboard.models import Category
 
-
-class Identity(models.Model):
-	user = models.ForeignKey(User, null=True, related_name='identity')
-	identity = models.CharField(_('identity'), max_length=255, unique=True)
-	provider = models.CharField(_('provider'), max_length=255)
-	data = models.TextField(_('data'))
-
-	# objects = IdentityManager()
+class Location(models.Model):
+	title = models.CharField(unique=True, max_length=250)
 
 	def __unicode__(self):
-		return self.identity
+		return self.title
 
 	class Meta:
-		ordering = ['id']
-		verbose_name = _('Identity')
-		verbose_name_plural = _('Identities')
+		ordering = ['title']
 
 
-class UserProfile(models.Model):
-	user = models.ForeignKey(User, null=True, related_name='profile')
-	GENDER_CHOICES = (
-		(True, _('Man')),
-		(False, _('Women')),
+AbstractUser._meta.get_field('email')._unique = True
+AbstractUser._meta.get_field('email').blank = False
+AbstractUser._meta.get_field('first_name').blank = True
+AbstractUser._meta.get_field('last_name').blank = True
+
+
+class User(AbstractUser):
+	phone = models.CharField(_('Phone'), max_length=256, help_text=_('Enter your phone number in this format +996 (555) 12-34-56'))
+	url = models.CharField(_('Url'), max_length=512, blank=True)
+	logo = models.ImageField(_('Photo or logo'), upload_to='accounts', null=True, blank=True)
+
+	USER_TYPE_CHOICES = (
+		(1, _('Build team')),
+		(2, _('Seller')),
+		(3, _('Master')),
+		(4, _('Company')),
 	)
-	gender = models.BooleanField(_('Gender'), default=False, choices=GENDER_CHOICES)
-	birthday = models.DateField(blank=True, null=True)
+	user_type = models.PositiveSmallIntegerField(_('Who are you?'), choices=USER_TYPE_CHOICES, max_length=1, default=2)
+	user_category = models.ManyToManyField(Category, verbose_name=_('Type of works'), help_text=_(' '), blank=True, null=True)
+	exp = models.PositiveSmallIntegerField(_('Experience'), null=True, blank=True, max_length=2)
+	team_size = models.PositiveSmallIntegerField(_('Number of people in a team'), null=True, blank=True, max_length=3)
+	year = models.PositiveIntegerField(_('On the market since'), null=True, blank=True, max_length=4)
+	location = models.ForeignKey(Location, verbose_name=_('Location'), related_name='location', null=True, blank=True)
+	delivery = models.BooleanField(_('Delivery'), default=False)
 
-	# identity = models.ManyToManyField(Identity, related_name='local_profile', verbose_name=_('Identity'), null=True, blank=True)
-	# verified = models.BooleanField(_('active'), default=False, db_index=True)
-
-	manna = models.DecimalField(verbose_name=_('Manna'), max_digits=10, decimal_places=2, default=0)
-	karma = models.DecimalField(verbose_name=_('Karma'), max_digits=10, decimal_places=2, default=0)
-	rating = models.DecimalField(verbose_name=_('Rating'), max_digits=10, decimal_places=2, default=0)
-
-	public = models.BooleanField(_('Public'), default=False, db_index=True)
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
-
-	# objects = UserMapManager()
-
-	def get_photo(self):
-		photos = []
-		for identity in self.user.identity.all():
-			data = simplejson.loads(identity.data)
-			if 'photo' in data:
-				photos.append(data['photo'])
-		if photos:
-			return photos[0]
-		else:
-			return self.gravatar()
-
-	def gravatar(self):
-		if hasattr(settings, 'ACCOUNTS_DEFAULT_IMAGE_SIZE'):
-			size = settings.ACCOUNTS_DEFAULT_IMAGE_SIZE
-
-		if hasattr(settings, 'ACCOUNTS_DEFAULT_IMAGE'):
-			default = settings.ACCOUNTS_DEFAULT_IMAGE
-		else:
-			default = ''
-
-		url = 'http://www.gravatar.com/avatar/' + hashlib.md5(self.user.email.lower()).hexdigest() + '?'
-		url += urllib.urlencode({'s': str(size), 'd': default})
-		return url
+	objects = UserManager()
 
 	def __unicode__(self):
-		return str(self.user)
+		if self.first_name and self.last_name:
+			return self.first_name + ' ' + self.last_name
+		elif self.first_name:
+			return self.first_name
+		elif self.last_name:
+			return self.last_name
+		else:
+			return self.username
 
-	class Meta:
-		ordering = ['user']
-		verbose_name = _('User Profile')
-		verbose_name_plural = _('User Profiles')
-
-
-def user_post_save(sender, instance, **kwargs):
-	(profile, new) = UserProfile.objects.get_or_create(user=instance)
-
-# Save profile when User save!
-models.signals.post_save.connect(user_post_save, sender=User)
-
-
-class Transaction(models.Model):
-	user = models.ForeignKey(User, related_name='transactions', verbose_name=_('User'))
-	TRANSACTION_PRICE_CHOICES = (
-		('servece', 'servece'),
-		('product', 'product'),
-		('balance', 'balance'),
-		('bonus', 'bonus'),
-	)
-	transection_type = models.CharField(verbose_name=_('Transaction Type'), max_length=50, choices=TRANSACTION_PRICE_CHOICES)
-	# зделать тип транзакции foreginkey
-
-	comment = models.TextField(verbose_name=_('Comment'), blank=True)
-	description = models.TextField(verbose_name=_('Description'), blank=True)
-
-	# добавить отправителя платежа или получателя
-	total = models.DecimalField(verbose_name=_('Total'), max_digits=10, decimal_places=4)
-	public = models.BooleanField(verbose_name=_('Public'), default=True)
-	created_at = models.DateTimeField(verbose_name=_('Created At'), auto_now_add=True)
-	updated_at = models.DateTimeField(verbose_name=_('Updated At'), auto_now=True)
-
-	def balabce(self):
-		pass
-
-	def __unicode__(self):
-		display = '#%s' % self.id
-		return display
-
-	class Meta:
-		ordering = ['-updated_at']
-		verbose_name = _('Transaction')
-		verbose_name_plural = _('Transactions')
+	@models.permalink
+	def get_absolute_url(self):
+		return ('accounts_profile', (), {'username': self.username})

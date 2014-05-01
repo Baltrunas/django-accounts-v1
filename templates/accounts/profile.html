@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{{ profile.get_user_type_display }}: <b>&laquo;{{ user.username }}&raquo;</b></h1>
+<div class="b-profile">
+	<dl class="b-contact">
+		{% if profile.category.all %}
+			<dt>{% trans "Type of works" %}:</dt>
+			<dd>
+				{% for category in profile.category.all %}
+					{{ category.title }}
+				{% endfor %}
+			</dd>
+		{% endif %}
+		<dt>{% trans "Phone" %}:</dt>
+		<dd>{{ profile.phone }}</dd>
+		{% if profile.email %}
+			<dt>{% trans "Email" %}:</dt>
+			<dd>{{ profile.email }}</dd>
+		{% endif %}
+		{% if profile.url %}
+			<dt>{% trans "Web-site" %}:</dt>
+			<dd>{{ profile.url }}</dd>
+		{% endif %}
+		{% if profile.exp %}
+			<dt>{% trans "Experience" %}:</dt>
+			<dd>{{ profile.exp }}</dd>
+		{% endif %}
+		{% if profile.team_size %}
+			<dt>{% trans "Number of people in a team" %}:</dt>
+			<dd>{{ profile.team_size }}</dd>
+		{% endif %}
+		{% if profile.year %}
+			<dt>{% trans "On the market since" %}:</dt>
+			<dd>{{ profile.year }}</dd>
+		{% endif %}
+		{% if profile.location %}
+			<dt>{% trans "Location" %}:</dt>
+			<dd>{{ profile.location }}</dd>
+		{% endif %}
+		<dt>{% trans "Delivery" %}:</dt>
+		<dd>{% if profile.delivery %}{% trans "Yes" %} {% else %}{% trans "No" %}{% endif %}</dd>
+	</dl>
+	<a href="#" class="b-profile__logo">
+		{% if profile.logo %}
+			<img src="{{ profile.logo }}" alt="{{ profile.username }}">
+		{% else %}
+			<img src="/templates/img/no_photo.png" alt="{% trans "No Photo" %}">
+		{% endif %}
+	</a>
+	{% if profile == user %}
+		<div class="b-profile__href">
+			<a href="{% url 'accounts_edit_profile' %}" class="b-form__submit">{% trans "Edit profile" %}</a><br>
+			<a href="{% url 'password_change' %}" class="b-form__submit">{% trans "Change password" %}</a><br>
+			<a href="{% url 'billboard_ad_add' %}" class="b-form__submit">{% trans "Add Ad" %}</a><br>
+		</div>
+	{% endif %}
+</div>
+<h2>{% trans "All ads by user" %}</h2>
+{% include 'billboard/blocks/ad_list.html' %}
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'remkg'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+{% endblock %}
